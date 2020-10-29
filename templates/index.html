@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Syndicate</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<!-- <link rel="stylesheet" href="static/css/main.css" /> -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+	</head>
+	<body class="landing">
+
+		<!-- Header -->
+			<header id="header" class="alt">
+				<h1><a href="{{ url_for('home') }}">Syndicate</a></h1>
+				<a href="#nav">Menu</a>
+			</header>
+
+		<!-- Nav -->
+			<nav id="nav">
+				<ul class="links">
+					<li><a href="{{ url_for('home') }}">Home</a></li>
+					<li><a href="{{ url_for('login') }}">Login</a></li>
+					<li><a href="{{ url_for('signup') }}">Sign Up</a></li>
+					<li><a href="{{ url_for('generic') }}">Generic</a></li>
+					<!-- <li><a href="{{ url_for('element') }}">Elements</a></li> -->
+				</ul>
+			</nav>
+
+		<!-- Banner -->
+			<section id="banner">
+				<i class="icon fa-puzzle-piece"></i>
+				<h2>Syndicate</h2>
+				<p>
+					The Analysis of Crime in Toronto.
+					<!-- This website uses the Toronto Crime Data to present some visualizations of the crimes associated in Toronto. It also
+		      provides a predictive model which given certain information about the time and type of crime occurred it will predict the
+		      location of the crime. -->
+				</p>
+				<ul class="actions">
+					<li><a href="{{ url_for('signup') }}" class="button big special">Learn More</a></li>
+				</ul>
+			</section>
+
+		<!-- One -->
+			<section id="one" class="wrapper style1">
+				<div class="inner">
+					<article class="feature left">
+						<span class="image"><img src="static/images/crimeperyear.jpg" alt="" /></span>
+						<div class="content">
+							<h2>Yearly Count of Crimes Occuring in Toronto</h2>
+							<p>
+								From the illustrated image, it is clear to see an consistent linear growth in the crimes occuring in Toronto from 2014 until 2017.
+								These crimes can consit of theft, robbery, assult and more.
+							</p>
+
+						</div>
+					</article>
+					<article class="feature right">
+						<span class="image"><img src="static/images/occurenceoveryear.jpg" alt="" /></span>
+						<div class="content">
+							<h2>Total Occurances of Popular Crimes Yearly</h2>
+							<p>
+								As seen in the image, aside from Assult, the most popular crimes in Toronto have been consistent in their statistics.
+								Assult however seems to have a consistant growth yearly from 2014 in the number of occurances.
+							</p>
+
+						</div>
+					</article>
+					<article class="feature left">
+						<span class="image"><img src="static/images/occurencedayofweek.jpg" alt="" /></span>
+						<div class="content">
+							<h2>Total Occurances of Popular Crimes Daily</h2>
+							<p>
+								Based on the image you can see that evidently Tuesday's are the most safest days historically from 2012 - 2017 to not be assaulted.
+							</p>
+
+						</div>
+					</article>
+					<article class="feature right">
+						<span class="image"><img src="static/images/eventsperburrough.jpg" alt="" /></span>
+						<div class="content">
+							<h2>Total Counts of Events at Different Burroughs of Toronto</h2>
+							<p>The burrough mapping is as follows : </p>
+							<p>    Downtown Toronto = 1,       North York = 3,    Scarborough = 4,     Etobicoke / Missisauga = 6</p>
+							<p>
+								Evidently from this graph it is clear the downtown Toronto has the most offences and North York has the least.
+								This could be due to the density of people in downtown in comparison to the density of people in other locations.
+							</p>
+						</div>
+					</article>
+
+					<article class="feature left">
+						<span class="image"><img src="static/images/top10dangerousNeighbourhoods.jpg" alt="" /></span>
+						<div class="content">
+							<h2>Top 10 Dangerous Neighbourhoods in the GTA</h2>
+							<p>
+								This image is representative of the most dangerous neighbourhoods in the GTA. From a clear initial obeservation you can see that
+								majority of these neighbourhoods are located in downtown Toronto which corresponds to it having the highest count of crimes in the
+								image above.
+							</p>
+						</div>
+					</article>
+				</div>
+			</section>
+
+		<!-- Two -->
+			<section id="two" class="wrapper special">
+				<div class="inner">
+					<header class="major narrow">
+						<h2>Access the Data</h2>
+						<p>
+							The data used to conduct this analysis and build the predictive model is based on publically available data provided by the Toronto Police.
+							Clicking the button below will transfer you to their publically available database.
+						</p>
+					</header>
+					<div class="image-grid">
+						<a  class="image"><img src="static/images/toronto-trinity.jpg" alt="" /></a>
+						<a  class="image"><img src="static/images/camera.jpg" alt="" /></a>
+						<a  class="image"><img src="static/images/type-writer.jpg" alt="" /></a>
+						<a  class="image"><img src="static/images/pic08.jpg" alt="" /></a>
+					</div>
+					<ul class="actions">
+						<li><a href="https://data.torontopolice.on.ca/" class="button big alt">Public Toront Police Data</a></li>
+					</ul>
+				</div>
+			</section>
+
+		<!-- Three -->
+			<section id="three" class="wrapper style3 special">
+				<div class="inner">
+					<header class="major narrow	">
+						<h2>Predict Crime</h2>
+						<p>Given specific information regarding the type of crime and the time of day we can to a certain extent, predict the location of the crime</p>
+					</header>
+					<ul class="action">
+						<form action="{{ url_for('predict')}}"method="post">
+						<input type="number" name="feat_MCI" placeholder="MCI" required="required" min = "1" max = "5" width = "50"/>
+						<input type="number" name="occurrencehour" placeholder="Hour" required="required" min = "1" max = "24" size = "50"/>
+						<p></p>
+						<input type="number" name="occurrenceyear" placeholder="Year" required="required" min = "2012" max = "2020" size = "50"/>
+						<input type="number" name="feat_occurrencemonth" placeholder="Month" required="required" min = "1" max = "12" size = "50"/>
+						<p></p>
+						<input type="number" name="feat_occurrencedayofweek" placeholder="Week" required="required" min = "1" max = "7" size = "50"/>
+						<input type="number" name="feat_premisetype" placeholder="Premise Type" required="required" min = "1" max = "5" size = "50"/>
+						<p></p>
+						<input type="number" name="feat_offence" placeholder="Offence" required="required" min = "1" max = "41" size = "50"/>
+
+						<p></p>
+						<button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+						</form>
+
+					 <h3>{{ prediction_text }}</h3>
+					</ul>
+				</div>
+			</section>
+
+		<!-- Four -->
+			<section id="four" class="wrapper style2 special">
+				<div class="inner">
+					<header class="major narrow">
+						<h2>Contact Me</h2>
+						<p>Feel free to email if you have any questions</p>
+					</header>
+					<form action="#" method="POST">
+						<div class="container 75%">
+							<div class="row uniform 50%">
+								<div class="6u 12u$(xsmall)">
+									<input name="name" placeholder="Name" type="text" />
+								</div>
+								<div class="6u$ 12u$(xsmall)">
+									<input name="email" placeholder="Email" type="email" />
+								</div>
+								<div class="12u$">
+									<textarea name="message" placeholder="Message" rows="4"></textarea>
+								</div>
+							</div>
+						</div>
+						<ul class="actions">
+							<li><input type="submit" class="special" value="Submit" /></li>
+							<li><input type="reset" class="alt" value="Reset" /></li>
+						</ul>
+					</form>
+				</div>
+			</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<ul class="icons">
+						<li><a href="https://github.com/vatsal220" class="icon fa-github">
+							<span class="label">GitHub</span>
+						</a></li>
+						<li><a href="https://www.vatsalp.com/" class="icon fa-male">
+							<span class="label">Personal</span>
+						</a></li>
+						<li><a href="https://data.torontopolice.on.ca/" class="icon fa-database">
+							<span class="label">Data</span>
+						</a></li>
+						<li><a href="https://www.linkedin.com/in/vatsal-p-a57978149/" class="icon fa-linkedin">
+							<span class="label">LinkedIn</span>
+						</a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; Vatsal</li>
+						<li>Images: <a href="http://unsplash.com">Unsplash</a>.</li>
+						<!-- <li>Design: <a href="http://templated.co">TEMPLATED</a>.</li> -->
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+		<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/skel.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/util.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+			<!-- <script src="static/js/jquery.min.js"></script>
+			<script src="static/js/skel.min.js"></script>
+			<script src="static/js/util.js"></script>
+			<script src="static/js/main.js"></script> -->
+
+	</body>
+</html>

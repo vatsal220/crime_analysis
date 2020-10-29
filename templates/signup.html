@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+{% import "bootstrap/wtf.html" as wtf %}
+<html>
+	<head>
+		<title>Syndicate</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header">
+				<h1><a href="{{ url_for('home') }}">Syndicate</a></h1>
+				<a href="#nav">Menu</a>
+			</header>
+
+		<!-- Nav -->
+			<nav id="nav">
+				<ul class="links">
+					<li><a href="{{ url_for('home') }}">Home</a></li>
+					<li><a href="{{ url_for('login') }}">Login</a></li>
+          <li><a href="{{ url_for('signup') }}">Sign Up</a></li>
+					<li><a href="{{ url_for('generic') }}">Generic</a></li>
+          <!-- <li><a href="{{ url_for('element') }}">Elements</a></li> -->
+
+				</ul>
+			</nav>
+
+
+      <!-- Three -->
+  			<section id="three" class="wrapper style2 special">
+  				<div class="inner">
+  					<header class="major narrow	">
+  						<h2>Sign Up</h2>
+  					</header>
+  					<ul class="action">
+  						<form action="/signup/"method="post">
+              <!-- <input type="email" name="email" id="email" value="" placeholder="Email" required="required"/> -->
+
+							{{ form.hidden_tag() }}
+							{{ wtf.form_field(form.username) }}
+							{{ wtf.form_field(form.email)  }}
+							{{ wtf.form_field(form.password) }}
+
+
+              <!-- <input type="email" name="" placeholder="Email" required="required"/>
+              <p></p>
+  						<input type="text" name="" placeholder="UserName" required="required"/>
+              <p></p>
+  						<input type="password" name="" placeholder="Password" required="required"/> -->
+  						<p></p>
+  						<button type="submit" class="button big alt" href="{{url_for('login')}}">Sign Up</button>
+              <!-- <li><button type = "submit" href="{{ url_for('login') }}" class="button big alt"> Sign Up</button></li> -->
+              </form>
+
+  					 <!-- <h3>{{ "Sign Up Successful" }}</h3> -->
+  					</ul>
+  				</div>
+  			</section>
+
+<!-- , .wrapper.style3 text, .wrapper.style3 password -->
+
+        <!-- <form class="form-signin">
+        <h2 class="form-signin-heading">Sign Up</h2>
+        <label for="inputUsername" class="sr-only">Username</label>
+        <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
+      </form> -->
+
+        <!-- Footer -->
+          <footer id="footer">
+            <div class="inner">
+              <ul class="icons">
+                <li><a href="https://github.com/vatsal220" class="icon fa-github">
+                  <span class="label">GitHub</span>
+                </a></li>
+                <li><a href="https://www.vatsalp.com/" class="icon fa-male">
+                  <span class="label">Personal</span>
+                </a></li>
+                <li><a href="https://data.torontopolice.on.ca/" class="icon fa-database">
+                  <span class="label">Data</span>
+                </a></li>
+                <li><a href="https://www.linkedin.com/in/vatsal-p-a57978149/" class="icon fa-linkedin">
+                  <span class="label">LinkedIn</span>
+                </a></li>
+              </ul>
+              <ul class="copyright">
+                <li>&copy; Vatsal</li>
+                <li>Images: <a href="http://unsplash.com">Unsplash</a>.</li>
+                <!-- <li>Design: <a href="http://templated.co">TEMPLATED</a>.</li> -->
+              </ul>
+            </div>
+          </footer>
+
+
+    <!-- Scripts -->
+			<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='js/skel.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='js/util.js') }}"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>
