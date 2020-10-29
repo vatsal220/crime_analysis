@@ -27,10 +27,9 @@ def get_config(fname):
         cfg = yaml.load(f, Loader=yaml.SafeLoader)
     return cfg
 
-cfg = get_config('config.yml')
-connection = cfg['connection'][ENV]
-
 if ENV == 'dev':
+    cfg = get_config('config.yml')
+    connection = cfg['connection'][ENV]
     app.debug = True
     app.config[connection['username']] = connection['password']
 else:
