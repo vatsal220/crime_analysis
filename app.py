@@ -148,9 +148,8 @@ def signup():
         db.session.commit()
 
         # send congrat email for registering
-        # try:
-        msg = Message(subject = 'Welcome {}'.format(form.username.data), sender = app.config.get("MAIL_USERNAME"), recipients = [str(form.email.data)], body = 'Congratulations you have signed up and your account has been created!')
-        mail.send(msg)
+        # msg = Message(subject = 'Welcome {}'.format(form.username.data), sender = app.config.get("MAIL_USERNAME"), recipients = [str(form.email.data)], body = 'Congratulations you have signed up and your account has been created!')
+        # mail.send(msg)
 
         return redirect(url_for('login'))
     else:
@@ -181,15 +180,12 @@ def model_page():
 @app.route('/predict_model', methods=['GET', 'POST'])
 def predict_model():
     int_features = [int(x) for x in request.form.values()]
-    print('pass1')
     final_features = [np.array(int_features)]
-    print('pass2')
     prediction = model.predict(final_features)
 
     output = round(prediction[0], 2)
     map_dict = {1 : 'DT Toronto', 3 : 'North York', 4 : 'Scarborough', 6 : 'Etobicoke'}
     output = map_dict[output]
-    print('pass3')
     return render_template('model_page.html', prediction_text = 'The Crime Occurred in Burrough : {}'.format(output))
 
 if __name__ == "__main__":
