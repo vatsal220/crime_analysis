@@ -4,6 +4,7 @@ import pickle
 import os
 
 from flask import Flask, request, jsonify, render_template, redirect, url_for, flash
+from flask_mail import Mail, Message
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
@@ -15,10 +16,8 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 
 app = Flask(__name__)
 model = pickle.load(open('model_GB.pkl', 'rb'))
-# app.config['SECRET_KEY'] = 'Thisissupposedtobesecret'
-app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
-ENV = 'prod'
+ENV = 'dev'
 
 def get_config(fname):
     '''
@@ -28,17 +27,40 @@ def get_config(fname):
         cfg = yaml.load(f, Loader=yaml.SafeLoader)
     return cfg
 
-if ENV == 'dev':
+if ENV == 'prod':
+
     cfg = get_config('config.yml')
     connection = cfg['connection'][ENV]
+    app.config['SECRET_KEY'] = connection['secret_key']
     app.debug = True
     app.config[connection['username']] = connection['password']
+
+    app.config['TESTING'] = False
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 25
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL__USE_SSL'] = False
+    app.config['MAIL_USERNAME'] = connection['mail_user']
+    app.config['MAIL_PASSWORD'] = connection['mail_pass']
+    app.config['MAIL_DEFAULT_SENDER'] = 'mail@syndicate.com'
+    app.config['MAIL_MAX_EMAILS'] = None
+    app.config['MAIL_ASCII_ATTACHMENTS'] = False
+
 else:
     app.debug = False
+    app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+    app.config['MAIL_SERVER'] = os.environ['MAIL_SERVER']
+    app.config['MAIL_PORT'] = 25
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL__USE_SSL'] = False
+    app.config['MAIL_USERNAME'] = os.environ['MAIL_USERNAME']
+    app.config['MAIL_PASSWORD'] = os.environ['MAIL_PASSWORD']
+
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-    # app.config[connection['username']] = os.environ['DATABASE_URL']
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+mail = Mail(app)
 Bootstrap(app)
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -124,6 +146,11 @@ def signup():
         new_user = User(username = form.username.data, email = form.email.data, password = hashed_password)
         db.session.add(new_user)
         db.session.commit()
+
+        # send congrat email for registering
+        # try:
+        msg = Message(subject = 'Welcome {}'.format(form.username.data), sender = app.config.get("MAIL_USERNAME"), recipients = [str(form.email.data)], body = 'Congratulations you have signed up and your account has been created!')
+        mail.send(msg)
 
         return redirect(url_for('login'))
     else:
