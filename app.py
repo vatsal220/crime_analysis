@@ -3,17 +3,18 @@ import yaml
 import pickle
 import os
 
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from wtforms import StringField, PasswordField, BooleanField
+from wtforms.validators import ValidationError
 from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
-model = pickle.load(open('model_GB.sav', 'rb'))
+model = pickle.load(open('model_GB.pkl', 'rb'))
 # app.config['SECRET_KEY'] = 'Thisissupposedtobesecret'
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
@@ -64,14 +65,39 @@ class RegisterForm(FlaskForm):
     username = StringField('UserName', validators = [InputRequired(), Length(min = 4, max = 15)])
     password = PasswordField('Password', validators = [InputRequired(), Length(min = 8, max = 80)])
 
+    def validate_username(self, username):
+        '''
+        Raises a validation error if a user tries to register using an existing username
+        '''
+        user = User.query.filter_by(username = username.data).first()
+        if user:
+            raise ValidationError('Username Taken')
 
+    def validate_email(self, email):
+        '''
+        Raises a validation error if a user tries to register using an existing email
+        '''
+        user = User.query.filter_by(email = email.data).first()
+        if user:
+            raise ValidationError('Email Taken')
 
 @app.route('/',methods=['GET', 'POST'])
 def home():
     return render_template('index.html')
 
+@app.route('/error/')
+def error():
+    return render_template('error.html')
+
+@app.route('/login_error/')
+def login_error():
+    return render_template('login_error.html')
+
 @app.route('/login/',methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -79,16 +105,18 @@ def login():
         if user:
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember = form.remember.data)
-                return redirect(url_for('element'))
-
-            return '<h1> Invalid Username or Password </h1>'
-
-        # return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
+                flash('Account Created For {}!'.format(form.username.data))
+                return redirect(url_for('model_page'))
+        else:
+            return redirect(url_for('login_error'))
 
     return render_template('login.html', form=form)
 
 @app.route('/signup/', methods = ['GET','POST'])
 def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
     form = RegisterForm()
 
     if form.validate_on_submit():
@@ -98,6 +126,8 @@ def signup():
         db.session.commit()
 
         return redirect(url_for('login'))
+    else:
+        return render_template('signup.html', form = form, message= 'Username / Email Already Exists')
         # return '<h1>' + form.email.data + ' ' + form.username.data + ' ' + form.password.data + '<h1>'
     return render_template('signup.html', form = form)
 
@@ -111,38 +141,32 @@ def logout():
 def generic():
     return render_template('generic.html')
 
-@app.route('/element/',methods=['GET', 'POST'])
+@app.route('/account/',methods=['GET', 'POST'])
 @login_required
-def element():
-    return render_template('elements.html')
+def account():
+    return render_template('account.html')
 
-@app.route('/predict',methods=['POST'])
-def predict():
-    '''
-    For rendering results on HTML GUI
-    '''
+@app.route('/model_page/', methods = ['GET','POST'])
+@login_required
+def model_page():
+    return render_template('model_page.html')
+
+@app.route('/predict_model', methods=['GET', 'POST'])
+def predict_model():
     int_features = [int(x) for x in request.form.values()]
+    print('pass1')
     final_features = [np.array(int_features)]
+    print('pass2')
     prediction = model.predict(final_features)
 
     output = round(prediction[0], 2)
-    map_dict = {1 : 'DT Toronto' , 3 : 'North York', 4 : 'Scarborough', 6 : 'Etobicoke'}
+    map_dict = {1 : 'DT Toronto', 3 : 'North York', 4 : 'Scarborough', 6 : 'Etobicoke'}
     output = map_dict[output]
-    return render_template('index.html', prediction_text='The Crime Occured In Burrough : {}'.format(output))
-
-@app.route('/predict_api',methods=['POST'])
-def predict_api():
-    '''
-    For direct API calls through request
-    '''
-
-    data = request.get_json(force=True)
-    prediction = model.predict([np.array(list(data.values()))])
-
-    output = prediction[0]
-
-
-    return jsonify(output)
+    print('pass3')
+    return render_template('model_page.html', prediction_text = 'The Crime Occurred in Burrough : {}'.format(output))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    if ENV == 'prod':
+        app.run()
+    else:
+        app.run(debug=True)

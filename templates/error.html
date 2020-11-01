@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Syndicate</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header">
+				<h1><a href="{{ url_for('home') }}">Syndicate</a></h1>
+				<a href="#nav">Menu</a>
+			</header>
+
+      <!-- Nav -->
+  			<nav id="nav">
+  				<ul class="links">
+  					{% if current_user.is_authenticated %}
+  						<li><a href="{{ url_for('home') }}">Home</a></li>
+							<li><a href="{{ url_for('account') }}">My Account</a></li>
+  						<li><a href="{{ url_for('model_page') }}">Predict Crimes</a></li>
+  						<li><a href="{{ url_for('logout') }}">Logout</a></li>
+
+  					{% else %}
+  						<li><a href="{{ url_for('home') }}">Home</a></li>
+  						<li><a href="{{ url_for('login') }}">Login</a></li>
+  						<li><a href="{{ url_for('signup') }}">Sign Up</a></li>
+  						<li><a href="{{ url_for('generic') }}">Generic</a></li>
+  						<li><a href="{{ url_for('model_page') }}">Predict Crimes</a></li>
+  					{% endif %}
+  				</ul>
+  			</nav>
+
+    <p>    </p>
+    <h1> ERROR </h1>
+
+
+    <!-- Footer -->
+      <!-- <footer id="footer">
+        <div class="inner">
+          <ul class="icons">
+            <li><a href="https://github.com/vatsal220" class="icon fa-github">
+              <span class="label">GitHub</span>
+            </a></li>
+            <li><a href="https://www.vatsalp.com/" class="icon fa-male">
+              <span class="label">Personal</span>
+            </a></li>
+            <li><a href="https://data.torontopolice.on.ca/" class="icon fa-database">
+              <span class="label">Data</span>
+            </a></li>
+            <li><a href="https://www.linkedin.com/in/vatsal-p-a57978149/" class="icon fa-linkedin">
+              <span class="label">LinkedIn</span>
+            </a></li>
+          </ul>
+          <ul class="copyright">
+            <li>&copy; Vatsal</li>
+            <li>Images: <a href="http://unsplash.com">Unsplash</a>.</li>
+          </ul>
+        </div>
+      </footer> -->
+
+  <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/skel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/util.js') }}"></script>
+    <!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>
