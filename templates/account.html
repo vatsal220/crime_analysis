@@ -1,18 +1,11 @@
 <!DOCTYPE HTML>
-<!--
-	Retrospect by TEMPLATED
-	templated.co @templatedco
-	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
--->
+{% block content %}
+{% import "bootstrap/wtf.html" as wtf %}
 <html>
 	<head>
-		<title>Elements - Retrospect by TEMPLATED</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
-		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
-		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
 	</head>
 	<body>
 
@@ -41,18 +34,29 @@
 					</ul>
 				</nav>
 
-		<!-- Main -->
-			<section id="main" class="wrapper">
-				<div class="container">
-					<header class="major special">
-						{% block content %}
-							<h1> Welcome {{ current_user.username }} </h1>
-						{% endblock content %}
+		<!-- Three -->
+			<section id="three" class="wrapper style2 special">
+				<div class="inner">
+					<header class="major narrow">
+							<h3> Welcome {{ current_user.username }} </h3>
+							<p> Update Account Information </p>
 
-
-						<!-- <h2>Elements</h2>
-						<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p> -->
 					</header>
+					<ul class="action">
+						<form method="POST" action="" enctype="multipart/form-data">
+							{{ form.hidden_tag() }}
+
+							{{ form.username (class="form-control-label") }}
+							<p> </p>
+							{{ form.email (class="form-control-label") }}
+
+						<p></p>
+						{{ form.submit (class = 'button big alt')}}
+						</form>
+					</ul>
+				</div>
+			</section>
+
 
 					<!-- Text -->
 						<!-- <section>
@@ -401,8 +405,6 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 							<p><span class="image right"><img src="static/images/pic06.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
 						</section>  -->
 
-				</div>
-			</section>
 
 		<!-- Footer -->
 			<footer id="footer">
@@ -439,3 +441,4 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 	</body>
 </html>
+{% endblock content %}

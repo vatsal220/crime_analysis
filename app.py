@@ -8,7 +8,7 @@ from flask_mail import Mail, Message
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
-from wtforms import StringField, PasswordField, BooleanField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError
 from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -27,7 +27,7 @@ def get_config(fname):
         cfg = yaml.load(f, Loader=yaml.SafeLoader)
     return cfg
 
-if ENV == 'prod':
+if ENV == 'dev':
 
     cfg = get_config('config.yml')
     connection = cfg['connection'][ENV]
@@ -103,6 +103,30 @@ class RegisterForm(FlaskForm):
         if user:
             raise ValidationError('Email Taken')
 
+class UpdateAccountForm(FlaskForm):
+    email = StringField('email', validators = [InputRequired(), Email(message = 'Invalid Email'), Length(max = 50)])
+    username = StringField('UserName', validators = [InputRequired(), Length(min = 4, max = 15)])
+
+    submit = SubmitField('Update')
+    def validate_username(self, username):
+        '''
+        Raises a validation error if a user tries to register using an existing username
+        '''
+        if username.data != current_user.username:
+            user = User.query.filter_by(username = username.data).first()
+            if user:
+                raise ValidationError('Username Taken')
+
+    def validate_email(self, email):
+        '''
+        Raises a validation error if a user tries to register using an existing email
+        '''
+        if email.data != current_user.email:
+            user = User.query.filter_by(email = email.data).first()
+            if user:
+                raise ValidationError('Email Taken')
+
+
 @app.route('/',methods=['GET', 'POST'])
 def home():
     return render_template('index.html')
@@ -170,7 +194,20 @@ def generic():
 @app.route('/account/',methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html')
+    form = UpdateAccountForm()
+
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Your account has been updated', 'success')
+        return redirect(url_for('account'))
+
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+
+    return render_template('account.html', title = 'Account', form = form)
 
 @app.route('/model_page/', methods = ['GET','POST'])
 @login_required
