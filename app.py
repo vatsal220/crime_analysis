@@ -17,7 +17,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 app = Flask(__name__)
 model = pickle.load(open('model_GB.pkl', 'rb'))
 
-ENV = 'dev'
+ENV = 'prod'
 
 def get_config(fname):
     '''
