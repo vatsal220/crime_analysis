@@ -19,7 +19,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 app = Flask(__name__)
 model = pickle.load(open('model_GB.pkl', 'rb'))
 
-ENV = 'dev'
+ENV = 'prod'
 
 def get_config(fname):
     '''
@@ -29,7 +29,7 @@ def get_config(fname):
         cfg = yaml.load(f, Loader=yaml.SafeLoader)
     return cfg
 
-if ENV == 'prod':
+if ENV == 'dev':
 
     cfg = get_config('config.yml')
     connection = cfg['connection'][ENV]
