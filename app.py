@@ -9,15 +9,17 @@ from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, DataRequired, EqualTo
 from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
 
 app = Flask(__name__)
 model = pickle.load(open('model_GB.pkl', 'rb'))
 
-ENV = 'prod'
+ENV = 'dev'
 
 def get_config(fname):
     '''
@@ -27,7 +29,7 @@ def get_config(fname):
         cfg = yaml.load(f, Loader=yaml.SafeLoader)
     return cfg
 
-if ENV == 'dev':
+if ENV == 'prod':
 
     cfg = get_config('config.yml')
     connection = cfg['connection'][ENV]
@@ -72,6 +74,20 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+
+    def get_reset_token(self, expires_seconds = 1800):
+        s = Serializer(app.config['SECRET_KEY'], expires_seconds)
+        return s.dumps({'user_id' : self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return user.query.get(user_id)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -125,6 +141,26 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email = email.data).first()
             if user:
                 raise ValidationError('Email Taken')
+
+class RequestResetForm(FlaskForm):
+    email = StringField('email', validators = [InputRequired(), Email(message = 'Invalid Email'), Length(max = 50)])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        '''
+        Raises a validation error if a user tries to register using an existing email
+        '''
+        if email.data != current_user.email:
+            user = User.query.filter_by(email = email.data).first()
+            if user is None:
+                raise ValidationError('There is no accouunt with that email. You must register first.')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators = [DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators = [DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')
+
+
 
 
 @app.route('/',methods=['GET', 'POST'])
@@ -213,6 +249,56 @@ def account():
 @login_required
 def model_page():
     return render_template('model_page.html')
+
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message(subject = 'Password Reset Request',
+                  sender = 'noreply@syndicate.com',
+                  recipients=[user.email])
+    msg.body = f''' To reset your password, visit the following link :
+{url_for('reset_token', token = token, _external = True)}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)
+
+
+@app.route('/reset_password/',methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email = form.email.data).first()
+        flask('An email has been sent with instructions to resset your password', 'info')
+        return redirect(url_for('login'))
+
+    return render_template('reset_request.html', title = 'Rest Password', form = form)
+
+@app.route('/reset_password/<token>',methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash('That is an invalid / expired token', 'warning')
+        return redirect(url_for('reset_request'))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = generate_password_hash(form.password.data, method = 'sha256') # sha256 will generate a hash which is 80 chars long
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        # send congrat email for registering
+        # msg = Message(subject = 'Welcome {}'.format(form.username.data), sender = app.config.get("MAIL_USERNAME"), recipients = [str(form.email.data)], body = 'Congratulations you have signed up and your account has been created!')
+        # mail.send(msg)
+        return redirect(url_for('login'))
+    return render_template('reset_token.html', title = 'Rest Password', form = form)
+
+
 
 @app.route('/predict_model', methods=['GET', 'POST'])
 def predict_model():
