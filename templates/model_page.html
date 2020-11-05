@@ -1,4 +1,5 @@
 <!DOCTYPE HTML>
+{% block content %}
 
 <html>
 	<head>
@@ -35,25 +36,120 @@
 						</header>
 						<ul class="action">
 							<form action="{{ url_for('predict_model')}}"method="post">
-							<input type="number" name="feat_MCI" placeholder="MCI" required="required" min = "1" max = "5" width = "50"/>
-							<input type="number" name="occurrencehour" placeholder="Hour" required="required" min = "1" max = "24" size = "50"/>
+
+								<div class="12u$">
+									<div class="action">
+										<div class="select-wrapper">
+											<select required = "required" name="feat_MCI">
+												<option value="" disabled selected>Select MCI</option>
+
+												<option value="1"> Assault </option>
+												<option value="2">Break and Enter</option>
+												<option value="3">Robbery</option>
+												<option value="4">Auto Theft</option>
+												<option value="5">Theft Over</option>
+
+											</select>
+									</div>
+								</div>
+							<p> </p>
+
+								<div class="12u$">
+									<div class="action">
+										<div class="select-wrapper">
+											<select required = "required" name="feat_premisetype">
+												<option value="" disabled selected>Select Premise</option>
+
+												<option value="1"> Outside </option>
+												<option value="2">House</option>
+												<option value="3">Commercial</option>
+												<option value="4">Apartment</option>
+												<option value="5">Other</option>
+
+											</select>
+									</div>
+								</div>
+
+							<p></p>
+
+								<div class="12u$">
+									<div class="action">
+										<div class="select-wrapper">
+											<select required = "required" name="feat_offence">
+												<option value="" disabled selected>Select Premise</option>
+
+												<option value="1"> Assault </option>
+												<option value="2"> B&E </option>
+												<option value="3"> Theft Of Motor Vehicle </option>
+												<option value="4"> Assault With Weapon </option>
+												<option value="5"> Robbery - Mugging </option>
+												<option value="6"> B&E W'Intent </option>
+												<option value="7"> Assault Bodily Harm </option>
+												<option value="8"> Theft Over </option>
+												<option value="9"> Robbery - Other </option>
+												<option value="10"> Robbery With Weapon </option>
+												<option value="11"> Assault Peace Officer </option>
+												<option value="12"> Assault - Resist/ Prevent Seiz </option>
+												<option value="13"> Robbery - Business </option>
+												<option value="14"> Robbery - Swarming </option>
+												<option value="15"> Aggravated Assault </option>
+												<option value="16"> Theft From Motor Vehicle Over  </option>
+												<option value="17"> Unlawfully In Dwelling-House </option>
+												<option value="18"> Discharge Firearm With Intent </option>
+												<option value="19"> Robbery - Purse Snatch </option>
+												<option value="20"> Robbery - Home Invasion </option>
+
+												<option value="21"> Discharge Firearm - Recklessly </option>
+												<option value="22"> Theft From Mail / Bag / Key </option>
+												<option value="23"> Pointing A Firearm </option>
+												<option value="24"> Robbery - Financial Institute </option>
+												<option value="25"> Theft Over - Shoplifting </option>
+												<option value="26"> Assault Peace Officer Wpn/Cbh </option>
+												<option value="27"> Administering Noxious Thing </option>
+												<option value="28"> Assault - Force/Thrt/Impede </option>
+												<option value="29"> Robbery - Vehicle Jacking </option>
+												<option value="30"> Robbery - Taxi </option>
+												<option value="31"> Robbery - Delivery Person </option>
+												<option value="32"> Use Firearm / Immit Commit Off </option>
+												<option value="33"> Theft Over - Bicycle </option>
+												<option value="34"> Crim Negligence Bodily Harm </option>
+												<option value="35"> Robbery - Atm </option>
+												<option value="36"> Disarming Peace/Public Officer </option>
+												<option value="37"> B&E Out </option>
+												<option value="38"> Theft Over - Distraction </option>
+												<option value="39"> Robbery - Armoured Car </option>
+												<option value="40"> Air Gun Or Pistol: Bodily Harm </option>
+
+												<option value="41"> Aggravated Aslt Peace Officer </option>
+
+											</select>
+									</div>
+								</div>
+								<!-- <input type="number" name="feat_offence" placeholder="Offence" required="required" min = "1" max = "41" size = "50"/> -->
+							<!-- <input type="number" name="feat_MCI" placeholder="MCI" required="required" min = "1" max = "5" width = "50"/> -->
 							<p></p>
 							<input type="number" name="occurrenceyear" placeholder="Year" required="required" min = "2012" max = "2020" size = "50"/>
 							<input type="number" name="feat_occurrencemonth" placeholder="Month" required="required" min = "1" max = "12" size = "50"/>
 							<p></p>
 							<input type="number" name="feat_occurrencedayofweek" placeholder="Week" required="required" min = "1" max = "7" size = "50"/>
-							<input type="number" name="feat_premisetype" placeholder="Premise Type" required="required" min = "1" max = "5" size = "50"/>
-							<p></p>
-							<input type="number" name="feat_offence" placeholder="Offence" required="required" min = "1" max = "41" size = "50"/>
+							<input type="number" name="occurrencehour" placeholder="Hour" required="required" min = "1" max = "24" size = "50"/>
+
+							<!-- <input type="number" name="feat_premisetype" placeholder="Premise Type" required="required" min = "1" max = "5" size = "50"/> -->
+
+
+
 
 							<p></p>
 							<button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
 							</form>
 
 						 <h2> {{ prediction_text }} </h2>
+
 						</ul>
 					</div>
+
 				</section>
+
 
         <!-- Footer -->
     			<footer id="footer">
@@ -86,5 +182,6 @@
     		<script src="{{ url_for('static', filename='js/util.js') }}"></script>
     		<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-    	</body>
-    </html>
+	</body>
+</html>
+{% endblock content %}

@@ -309,7 +309,7 @@ def predict_model():
     output = round(prediction[0], 2)
     map_dict = {1 : 'DT Toronto', 3 : 'North York', 4 : 'Scarborough', 6 : 'Etobicoke'}
     output = map_dict[output]
-    return render_template('model_page.html', prediction_text = 'The Crime Occurred in Burrough : {}'.format(output))
+    return render_template('model_page.html', prediction_text = 'The Crime Occurred in : {}'.format(output))
 
 if __name__ == "__main__":
     if ENV == 'prod':
