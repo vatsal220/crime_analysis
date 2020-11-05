@@ -223,9 +223,13 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-@app.route('/generic/',methods=['GET', 'POST'])
-def generic():
-    return render_template('generic.html')
+@app.route('/learn_more/',methods=['GET', 'POST'])
+def learn_more():
+    return render_template('learn_more.html')
+
+@app.route('/email_sent/',methods=['GET', 'POST'])
+def email_sent():
+    return render_template('email_sent.html')
 
 @app.route('/account/',methods=['GET', 'POST'])
 @login_required
